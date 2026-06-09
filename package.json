@@ -1,0 +1,14 @@
+{
+  "name": "cookies-extractor",
+  "version": "1.0.0",
+  "description": "Extract, format and copy cookies from any website.",
+  "private": true,
+  "scripts": {
+    "build": "node build.js",
+    "dev": "node build.js --dev"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.5",
+    "lightningcss": "^1.29.3"
+  }
+}

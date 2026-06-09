@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <title>Cookies Extractor</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <div class="brand-icon" aria-hidden="true">
+        <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="18" cy="18" r="18" fill="url(#brand-grad)"/>
+          <circle cx="18" cy="19" r="11" fill="url(#cookie-grad)"/>
+          <circle cx="14" cy="15" r="2"   fill="#78350f" opacity="0.8"/>
+          <circle cx="14" cy="15" r="0.7" fill="#fef9c3" opacity="0.7"/>
+          <circle cx="21" cy="17" r="1.6" fill="#78350f" opacity="0.8"/>
+          <circle cx="21" cy="17" r="0.5" fill="#fef9c3" opacity="0.7"/>
+          <circle cx="16" cy="22" r="1.8" fill="#78350f" opacity="0.8"/>
+          <circle cx="16" cy="22" r="0.6" fill="#fef9c3" opacity="0.7"/>
+          <circle cx="22" cy="23" r="1.4" fill="#78350f" opacity="0.7"/>
+          <circle cx="13" cy="22" r="1.1" fill="#78350f" opacity="0.6"/>
+          <circle cx="19" cy="13" r="1.1" fill="#78350f" opacity="0.6"/>
+          <circle cx="18" cy="19" r="11"  fill="none" stroke="#d97706" stroke-width="0.5" opacity="0.4"/>
+          <defs>
+            <linearGradient id="brand-grad" x1="0" y1="0" x2="36" y2="36">
+              <stop offset="0%" stop-color="#8b5cf6"/>
+              <stop offset="100%" stop-color="#4c1d95"/>
+            </linearGradient>
+            <radialGradient id="cookie-grad" cx="40%" cy="35%" r="65%">
+              <stop offset="0%"   stop-color="#fde68a"/>
+              <stop offset="100%" stop-color="#d97706"/>
+            </radialGradient>
+          </defs>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h1>Cookies Extractor <span class="cookie-emoji">🍪</span></h1>
+        <p class="site-label" id="site-label">Detecting…</p>
+      </div>
+    </div>
+    <button id="theme-toggle" class="icon-btn" aria-label="Toggle theme">
+      <svg id="icon-sun" class="icon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="4"/>
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+      </svg>
+      <svg id="icon-moon" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+    </button>
+  </header>
+
+  <div class="meta-row">
+    <div class="meta-pill">
+      <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 8v4l3 2"/>
+      </svg>
+      <span id="count-label">—</span>
+    </div>
+    <div class="meta-pill meta-pill-domain">
+      <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      </svg>
+      <span id="domain-label" class="domain-text">—</span>
+    </div>
+    <button id="refresh-btn" class="icon-btn" aria-label="Re-extract">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+        <path d="M21 3v5h-5"/>
+        <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+        <path d="M3 21v-5h5"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="format-selector">
+    <button class="format-trigger" id="format-trigger" aria-haspopup="listbox" aria-expanded="false">
+      <span class="format-trigger-left">
+        <span class="format-trigger-badge" id="trigger-badge">JSON</span>
+        <span class="format-trigger-name" id="trigger-name">Object</span>
+      </span>
+      <span class="format-trigger-right">
+        <span class="format-trigger-desc" id="trigger-desc">name → {value, expires}</span>
+        <svg class="icon-xs chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </span>
+    </button>
+
+    <div class="format-dropdown hidden" id="format-dropdown" role="listbox">
+      <div class="fmt-group">
+        <div class="fmt-group-label">JSON</div>
+        <button class="fmt-option active" data-format="json-object"    role="option" aria-selected="true">
+          <span class="fmt-opt-badge fmt-json">JSON</span>
+          <span class="fmt-opt-info">
+            <span class="fmt-opt-name">Object</span>
+            <span class="fmt-opt-desc">name → {value, expires}</span>
+          </span>
+        </button>
+        <button class="fmt-option" data-format="json-array" role="option">
+          <span class="fmt-opt-badge fmt-json">JSON</span>
+          <span class="fmt-opt-info">
+            <span class="fmt-opt-name">Array</span>
+            <span class="fmt-opt-desc">Full cookie objects with all metadata</span>
+          </span>
+        </button>
+        <button class="fmt-option" data-format="puppeteer" role="option">
+          <span class="fmt-opt-badge fmt-json">JSON</span>
+          <span class="fmt-opt-info">
+            <span class="fmt-opt-name">Puppeteer / Playwright</span>
+            <span class="fmt-opt-desc">Ready for page.setCookie()</span>
+          </span>
+        </button>
+        <button class="fmt-option" data-format="requests" role="option">
+          <span class="fmt-opt-badge fmt-py">PY</span>
+          <span class="fmt-opt-info">
+            <span class="fmt-opt-name">Python Requests</span>
+            <span class="fmt-opt-desc">requests.get(url, cookies={...})</span>
+          </span>
+        </button>
+      </div>
+
+      <div class="fmt-group">
+        <div class="fmt-group-label">Text</div>
+        <button class="fmt-option" data-format="netscape" role="option">
+          <span class="fmt-opt-badge fmt-txt">TXT</span>
+          <span class="fmt-opt-info">
+            <span class="fmt-opt-name">Netscape</span>
+            <span class="fmt-opt-desc">curl --cookie-jar, wget</span>
+          </span>
+        </button>
+        <button class="fmt-option" data-format="header" role="option">
+          <span class="fmt-opt-badge fmt-txt">TXT</span>
+          <span class="fmt-opt-info">
+            <span class="fmt-opt-name">Cookie Header</span>
+            <span class="fmt-opt-desc">name=val; name=val (HTTP header)</span>
+          </span>
+        </button>
+        <button class="fmt-option" data-format="keyval" role="option">
+          <span class="fmt-opt-badge fmt-txt">TXT</span>
+          <span class="fmt-opt-info">
+            <span class="fmt-opt-name">key=value</span>
+            <span class="fmt-opt-desc">One pair per line</span>
+          </span>
+        </button>
+        <button class="fmt-option" data-format="curl" role="option">
+          <span class="fmt-opt-badge fmt-sh">SH</span>
+          <span class="fmt-opt-info">
+            <span class="fmt-opt-name">cURL flag</span>
+            <span class="fmt-opt-desc">--cookie "name=val; ..."</span>
+          </span>
+        </button>
+      </div>
+
+      <div class="fmt-group">
+        <div class="fmt-group-label">Code</div>
+        <button class="fmt-option" data-format="js-snippet" role="option">
+          <span class="fmt-opt-badge fmt-js">JS</span>
+          <span class="fmt-opt-info">
+            <span class="fmt-opt-name">JS Snippet</span>
+            <span class="fmt-opt-desc">document.cookie = … (devtools paste)</span>
+          </span>
+        </button>
+        <button class="fmt-option" data-format="fetch-snippet" role="option">
+          <span class="fmt-opt-badge fmt-js">JS</span>
+          <span class="fmt-opt-info">
+            <span class="fmt-opt-name">Fetch Snippet</span>
+            <span class="fmt-opt-desc">fetch() with Cookie header preset</span>
+          </span>
+        </button>
+      </div>
+
+      <div class="fmt-group">
+        <div class="fmt-group-label">Other</div>
+        <button class="fmt-option" data-format="base64" role="option">
+          <span class="fmt-opt-badge fmt-b64">B64</span>
+          <span class="fmt-opt-info">
+            <span class="fmt-opt-name">Base64</span>
+            <span class="fmt-opt-desc">Base64-encoded JSON (env vars, CLI)</span>
+          </span>
+        </button>
+        <button class="fmt-option" data-format="csv" role="option">
+          <span class="fmt-opt-badge fmt-csv">CSV</span>
+          <span class="fmt-opt-info">
+            <span class="fmt-opt-name">CSV</span>
+            <span class="fmt-opt-desc">name,value,domain,path,expires,secure</span>
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="output-card">
+    <pre id="output" class="output-pre" aria-live="polite"></pre>
+
+    <div id="state-loading" class="state-overlay">
+      <div class="spinner"></div>
+      <span>Extracting cookies…</span>
+    </div>
+
+    <div id="state-empty" class="state-overlay hidden">
+      <div class="empty-icon">🍪</div>
+      <span class="state-title">No cookies found</span>
+      <span class="state-sub">This page has no accessible cookies</span>
+    </div>
+
+    <div id="state-error" class="state-overlay hidden">
+      <div class="error-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8"  x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+      </div>
+      <span class="state-title" id="error-message">Cannot access this page</span>
+      <span class="state-sub">Try a regular http/https page</span>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button id="copy-btn" class="btn-copy" disabled>
+      <svg id="copy-icon" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect width="14" height="14" x="8" y="8" rx="2"/>
+        <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+      </svg>
+      <svg id="check-icon" class="icon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+      <span id="copy-label">Copy</span>
+    </button>
+    <button id="download-btn" class="btn-download" disabled>
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/>
+        <line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
+      <span>Save</span>
+    </button>
+  </div>
+
+  <div id="toast" class="toast" role="alert" aria-live="assertive"></div>
+
+  <script src="highlighter.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
