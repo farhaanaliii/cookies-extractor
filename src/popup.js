@@ -291,6 +291,8 @@ document.addEventListener('DOMContentLoaded', () => {
   applyTheme(localStorage.getItem(STORAGE_THEME) || 'dark');
   activateFormat(activeFormat);
 
+  document.getElementById('version-label').textContent = `v${chrome.runtime.getManifest().version}`;
+
   ui.themeToggle.addEventListener('click', toggleTheme);
   ui.refreshBtn.addEventListener('click', extract);
 

@@ -398,3 +398,16 @@ header {
 }
 [data-theme="light"] .toast.success { border-color: rgba(5, 150, 105, 0.25); }
 [data-theme="light"] .toast.error   { border-color: rgba(220, 38, 38, 0.25); }
+
+.version-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -4px;
+}
+
+.version-footer #version-label {
+  font-size: 9.5px;
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}

@@ -3,10 +3,13 @@ const lightningcss = require('lightningcss');
 const fs           = require('fs');
 const path         = require('path');
 
-const isDev  = process.argv.includes('--dev');
-const SRC    = path.join(__dirname, 'src');
-const ICONS  = path.join(__dirname, 'icons');
-const DIST   = path.join(__dirname, 'dist');
+const isDev   = process.argv.includes('--dev');
+const pkg     = JSON.parse(fs.readFileSync(path.join(__dirname, 'package.json'), 'utf8'));
+const VERSION = pkg.version;
+
+const SRC        = path.join(__dirname, 'src');
+const ICONS      = path.join(__dirname, 'icons');
+const DIST       = path.join(__dirname, 'dist');
 const DIST_SRC   = path.join(DIST, 'src');
 const DIST_ICONS = path.join(DIST, 'icons');
 
@@ -23,10 +26,9 @@ function copyIcons() {
 }
 
 function copyManifest() {
-  fs.copyFileSync(
-    path.join(__dirname, 'manifest.json'),
-    path.join(DIST, 'manifest.json')
-  );
+  const manifest = JSON.parse(fs.readFileSync(path.join(__dirname, 'manifest.json'), 'utf8'));
+  manifest.version = VERSION;
+  fs.writeFileSync(path.join(DIST, 'manifest.json'), JSON.stringify(manifest, null, 2));
 }
 
 async function buildJS() {
