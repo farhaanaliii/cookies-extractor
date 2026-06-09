@@ -401,13 +401,35 @@ header {
 
 .version-footer {
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: space-between;
   margin-top: -4px;
 }
 
-.version-footer #version-label {
+.footer-copy {
+  font-size: 9.5px;
+  color: var(--text-3);
+  letter-spacing: 0.01em;
+}
+
+.footer-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#version-label {
   font-size: 9.5px;
   color: var(--text-3);
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.02em;
 }
+
+.footer-gh {
+  display: flex;
+  align-items: center;
+  color: var(--text-3);
+  transition: color 150ms var(--ease);
+}
+.footer-gh:hover { color: var(--text-2); }
+.footer-gh svg { width: 13px; height: 13px; display: block; }
